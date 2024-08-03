@@ -12,13 +12,14 @@ namespace Clipboard_Toast
 {
     public partial class CenterToast : Form
     {
-        private bool up = false;
+        #pragma warning disable IDE0044
+        private bool _isUp = false;
         private int toastX, toastY;
-        private const int VERTICAL_RES = 1080;
+
         public CenterToast(bool up)
         {
             InitializeComponent();
-            this.up = up;
+            this._isUp = up;
             this.Opacity = 0;
         }
 
@@ -59,10 +60,10 @@ namespace Clipboard_Toast
         {
             toastX = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width/2;
 
-            if (!up)
-                toastY = Screen.PrimaryScreen.WorkingArea.Height - this.Height - (VERTICAL_RES/ 11);
+            if (!_isUp)
+                toastY = Screen.PrimaryScreen.WorkingArea.Height - this.Height - (MainWindow.screenHeight / 11);
             else
-                toastY = this.Height - (1080 / 300);
+                toastY = this.Height - (MainWindow.screenHeight / 300);
 
             this.Location = new Point(toastX, toastY);
         }

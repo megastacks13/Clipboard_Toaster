@@ -12,16 +12,14 @@ namespace Clipboard_Toast
 {
     public partial class LeftToast : Form
     {
-        private int speed_ppt = 10;
+        private int _horizontalSpeed = 10;
         private int toastX, toastY;
-        private int ScreenWidth = Screen.PrimaryScreen.WorkingArea.Width;
-        private int ScreenHeight = Screen.PrimaryScreen.WorkingArea.Height;
-        private bool up = false;
-        private const int VERTICAL_RES = 1080;
+        private bool _isUp = false;
+
         public LeftToast(bool up)
         {
             InitializeComponent();
-            this.up = up;
+            this._isUp = up;
         }
 
         private void ToastMessage_Load(object sender, EventArgs e)
@@ -31,7 +29,7 @@ namespace Clipboard_Toast
 
         private void ToastTimer_Tick(object sender, EventArgs e)
         {
-            toastX += speed_ppt;
+            toastX += _horizontalSpeed;
             this.Location = new Point(toastX, toastY);
             this.BringToFront();
             if (toastX >= 0)
@@ -49,7 +47,7 @@ namespace Clipboard_Toast
             this.BringToFront();
             if (timer <= 0)
             {
-                this.Location = new Point(toastX -= speed_ppt, toastY);
+                this.Location = new Point(toastX -= _horizontalSpeed, toastY);
                 if (toastX < -this.Width)
                 {
                     ToastTimerDown.Stop();
@@ -68,10 +66,10 @@ namespace Clipboard_Toast
         private void Position()
         {
             toastX = -this.Width;
-            if (!up)
-                toastY = ScreenHeight - this.Height - (VERTICAL_RES / 260);
+            if (!_isUp)
+                toastY = MainWindow.screenHeight - this.Height - (MainWindow.screenHeight / 260);
             else
-                toastY = this.Height - (VERTICAL_RES / 260);
+                toastY = this.Height - (MainWindow.screenHeight / 260);
 
             this.Location = new Point(toastX, toastY);
         }

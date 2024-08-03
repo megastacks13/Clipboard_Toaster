@@ -27,31 +27,40 @@ namespace Clipboard_Toast
         private IntPtr _clipboardViewerNext;                // Our variable that will hold the value to identify the next window in the clipboard viewer chain
 
         // Toast-related variables
-        // widht constants
+        public static string title = "";
+        public static string message = "";
+
+        /// <summary>
+        /// Width of the Main Screen -> Same as horizontal resolution
+        /// </summary>
+        public static int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+        /// <summary>
+        /// Height of the Main Screen -> Same as vertical resolution
+        /// </summary>
+        public static int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
+
+        // Strings are used rather than an enum because they contain string data needed for data finding
+        // Width constants
         private const string POS_LEFT = "Left";
         private const string POS_CENTER = "Center";
         private const string POS_RIGHT = "Right";
-        // height constants
+
+        // Height constants
         private const string HE_UP = "Up";
         private const string HE_DOWN = "Down";
 
-        private static string title = "";
-        private Form toast;
-        private ToastType toastType;
-        string clipboard_value = "";
-        string clipboard_old = "";
+        /// <summary>
+        /// Variable for storing the toast that will be displayed
+        /// </summary>
+        private Form _toast;
 
-        private string height_state = HE_DOWN;
-        private string position_state = POS_LEFT;
-        private string img_name;
+        private string verticalPositioning = HE_DOWN;
+        private string horizontalPositioning = POS_LEFT;
+        private string scrImageName;
 
+        private string clipboardOld = "";
+        private string clipboardValue = "";
 
-        private enum ToastType
-        {
-            RIGHT,
-            CENTER,
-            LEFT,
-        }
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);    // Process the message 
@@ -63,14 +72,14 @@ namespace Clipboard_Toast
                 if (iData.GetDataPresent(DataFormats.Text))
                 {
                     title = "Text Copied!";      // Clipboard text
-                    clipboard_value = Clipboard.GetText();
+                    clipboardValue = Clipboard.GetText();
 
                 }
                 else if (iData.GetDataPresent(DataFormats.Bitmap))
                 {
                     title = "Image Copied";  // Clipboard image
                     // TO-DO: Change to show unique text per image but consistent for each image
-                    clipboard_value = "Image"; 
+                    clipboardValue = "Image"; 
 
                 }
                 ShowToast();
@@ -86,96 +95,90 @@ namespace Clipboard_Toast
 
         private void ShowToast()
         {
-            // TO-DO: This will depend on the selection of the radio buttons
-            initializeToast();
+            InitializeToast();
 
-            if (!clipboard_value.Equals(clipboard_old))
+            title = clipboardValue.Equals(clipboardOld) == true ? "No change on the copied data" : "Copied!";
+            message = clipboardValue;
+            clipboardOld = clipboardValue;
+            _toast.Show();
+
+        }
+
+        private void InitializeToast()
+        {
+            switch (horizontalPositioning)
             {
-                clipboard_old = clipboard_value;
-                toast.Show();
+                case POS_RIGHT:
+                    _toast = new RightToast(verticalPositioning == HE_UP);
+                    break;
+                case POS_CENTER:
+                    _toast = new CenterToast(verticalPositioning == HE_UP);
+                    break;
+                case POS_LEFT:
+                    _toast = new LeftToast(verticalPositioning == HE_UP);
+                    break;
+
             }
-  
+
         }
 
-        // Not a need of detecting when the value of the Down button is marked
-        private void rb_Up_CheckedChanged(object sender, EventArgs e)
+        // Interaction with radio buttons
+        private void Rb_Up_CheckedChanged(object sender, EventArgs e)
         {
-            changeScreenImage();
+            ChangeScreenImage();
         }
-        private void rb_Down_CheckedChanged(object sender, EventArgs e)
+        private void Rb_Down_CheckedChanged(object sender, EventArgs e)
         {
-            changeScreenImage();
-        }
-
-
-        // TO-DO: Change the "toast" object so it shows the corresponding toast for every case
-        private void rb_Left_CheckedChanged(object sender, EventArgs e)
-        {
-            toastType = ToastType.LEFT;
-            changeScreenImage();
+            ChangeScreenImage();
         }
 
-        private void rb_Center_CheckedChanged(object sender, EventArgs e)
+        private void Rb_Left_CheckedChanged(object sender, EventArgs e)
         {
-            toastType = ToastType.CENTER;
-            changeScreenImage();
+            ChangeScreenImage();
         }
 
-        private void rb_Right_CheckedChanged(object sender, EventArgs e)
+        private void Rb_Center_CheckedChanged(object sender, EventArgs e)
         {
-            toastType = ToastType.RIGHT;
-            changeScreenImage();
+            ChangeScreenImage();
         }
 
-        private void changeScreenImage()
+        private void Rb_Right_CheckedChanged(object sender, EventArgs e)
         {
-            updateStates();
-            img_name = $"Scr_{height_state}_{position_state}";
-            pb_ScreenImage.Image = (Image) Properties.Resources.ResourceManager.GetObject(img_name);
+            ChangeScreenImage();
         }
 
-        private void updateStates()
+        // UI management
+
+        private void ChangeScreenImage()
         {
-            if (rb_Left.Checked)
+            UpdateStates();
+            scrImageName = $"Scr_{verticalPositioning}_{horizontalPositioning}";
+            Pb_ScreenImage.Image = (Image)Properties.Resources.ResourceManager.GetObject(scrImageName);
+        }
+
+        private void UpdateStates()
+        {
+            if (Rb_Left.Checked)
             {
-                position_state = POS_LEFT;
+                horizontalPositioning = POS_LEFT;
             }
-            else if (rb_Center.Checked)
+            else if (Rb_Center.Checked)
             {
-                position_state = POS_CENTER;
+                horizontalPositioning = POS_CENTER;
             }
             else // when the right button is checked...
             {
-                position_state = POS_RIGHT;
+                horizontalPositioning = POS_RIGHT;
             }
 
-            if (rb_Up.Checked)
+            if (Rb_Up.Checked)
             {
-                height_state = HE_UP;
+                verticalPositioning = HE_UP;
             }
             else // when the Down Button is checked...
             {
-                height_state = HE_DOWN;
+                verticalPositioning = HE_DOWN;
             }
-        }
-        private void initializeToast()
-        {
-            switch (toastType)
-            {
-                case ToastType.RIGHT:
-                    toast = new RightToast(height_state == HE_UP);
-                    ((RightToast)toast).SetMessage(title, clipboard_value);
-                    break;
-                case ToastType.CENTER:
-                    toast = new CenterToast(height_state == HE_UP);
-                    break;
-                case ToastType.LEFT:
-                    toast = new LeftToast(height_state == HE_UP);
-                    ((LeftToast)toast).SetMessage(title, clipboard_value);
-                    break;
-
-            }
-
         }
     }
 }
