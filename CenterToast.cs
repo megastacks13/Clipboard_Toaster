@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Clipboard_Toast
+{
+    public partial class CenterToast : Form
+    {
+        private bool up = false;
+        private int toastX, toastY;
+        private const int VERTICAL_RES = 1080;
+        public CenterToast(bool up)
+        {
+            InitializeComponent();
+            this.up = up;
+            this.Opacity = 0;
+        }
+
+        private void ToastTimer_Tick(object sender, EventArgs e)
+        {
+            Position();
+            this.BringToFront();
+            this.Opacity += 0.05;
+            Console.WriteLine(this.Opacity);
+            if (this.Opacity >= 1.0)
+            {
+                ToastTimer.Stop();
+                ToastTimerDown.Start();
+            }
+        }
+
+        int timer = 100;
+
+        private void ToastTimerDown_Tick(object sender, EventArgs e)
+        {
+            timer--;
+            this.BringToFront();
+            if (timer <= 0)
+            {
+                Console.WriteLine(this.Opacity);
+                this.Opacity -= 0.05;
+                if (this.Opacity <= 0.0)
+                {
+                    ToastTimerDown.Stop();
+                    timer = 100;
+                    this.Close();
+                }
+            }
+        }
+
+
+        private void Position()
+        {
+            toastX = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width/2;
+
+            if (!up)
+                toastY = Screen.PrimaryScreen.WorkingArea.Height - this.Height - (VERTICAL_RES/ 11);
+            else
+                toastY = this.Height - (1080 / 300);
+
+            this.Location = new Point(toastX, toastY);
+        }
+    }
+}
