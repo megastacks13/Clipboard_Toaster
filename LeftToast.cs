@@ -25,6 +25,8 @@ namespace Clipboard_Toast
         private void ToastMessage_Load(object sender, EventArgs e)
         {
             Position();
+            lb_Title.Text = MainWindow.title;
+            lb_message.Text = MainWindow.message;
         }
 
         private void ToastTimer_Tick(object sender, EventArgs e)
@@ -55,12 +57,6 @@ namespace Clipboard_Toast
                     this.Close();
                 }
             }
-        }
-
-        public void SetMessage(string title, string subtitle)
-        {
-            lb_Title.Text = title;
-            lb_message.Text = subtitle;
         }
 
         private void Position()

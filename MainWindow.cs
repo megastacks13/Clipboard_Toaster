@@ -97,7 +97,7 @@ namespace Clipboard_Toast
         {
             InitializeToast();
 
-            title = clipboardValue.Equals(clipboardOld) == true ? "No change on the copied data" : "Copied!";
+            title = clipboardValue.Equals(clipboardOld) == true ? "Repeated Data" : "Copied!";
             message = clipboardValue;
             clipboardOld = clipboardValue;
             _toast.Show();
