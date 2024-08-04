@@ -6,8 +6,10 @@ namespace Clipboard_Toast
 {
     public partial class LeftToast : Form
     {
-        private int _horizontalSpeed = 10;
+        private int _horizontalSpeed = MainWindow.screenWidth / 450;
         private int toastX, toastY;
+        private int timer = 200;
+        private double toastTargetX;
         private bool _isUp = false;
 
         public LeftToast(bool up)
@@ -26,24 +28,24 @@ namespace Clipboard_Toast
         private void ToastTimer_Tick(object sender, EventArgs e)
         {
             toastX += _horizontalSpeed;
+            this.Opacity = ComputeOpacity(Math.Max(1,  toastTargetX - toastX));
             this.Location = new Point(toastX, toastY);
-            this.BringToFront();
-            if (toastX >= 0)
+
+            if (toastX >= toastTargetX)
             {
                 ToastTimer.Stop();
                 ToastTimerDown.Start();
             }
         }
 
-        int timer = 150;
-
         private void ToastTimerDown_Tick(object sender, EventArgs e)
         {
             timer--;
-            this.BringToFront();
+
             if (timer <= 0)
             {
                 this.Location = new Point(toastX -= _horizontalSpeed, toastY);
+                this.Opacity = ComputeOpacity((toastX - toastTargetX) * 2);
                 if (toastX < -this.Width)
                 {
                     ToastTimerDown.Stop();
@@ -55,7 +57,7 @@ namespace Clipboard_Toast
 
         private void Position()
         {
-            toastX = -this.Width;
+            toastX = -this.Width/2;
             if (!_isUp)
                 toastY = MainWindow.screenHeight - this.Height - (MainWindow.screenHeight / 260);
             else
@@ -64,6 +66,11 @@ namespace Clipboard_Toast
             this.Location = new Point(toastX, toastY);
         }
 
+        private void ComputeTargetPosition()
+        {
+            toastTargetX = this.Width * 6.0/5.0;
+        }
+        double ComputeOpacity(double distance) => 1.0 / distance;
 
     }
 }

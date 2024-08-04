@@ -8,7 +8,6 @@ namespace Clipboard_Toast
     {
         #pragma warning disable IDE0044
         private static int horizontalSpeed = MainWindow.screenWidth/960;
-        private double _opacityRate;
         private int timer = 200;
         private int _toastX, _toastY;
         private double _toastTargetX;
@@ -34,7 +33,6 @@ namespace Clipboard_Toast
             this.Location = new Point(_toastX -= horizontalSpeed, _toastY);
             
             this.Opacity = ComputeOpacity(Math.Max(1, _toastX - _toastTargetX));
-            Console.WriteLine(this.Opacity);
 
             if (_toastX <= MainWindow.screenWidth - this.Width * 11/10)
             {
@@ -50,7 +48,6 @@ namespace Clipboard_Toast
             {
                 this.Location = new Point(_toastX += horizontalSpeed, _toastY);
                 this.Opacity = ComputeOpacity((_toastX - _toastTargetX)*2);
-                Console.WriteLine(this.Opacity);
                 if (_toastX > MainWindow.screenWidth)
                 {
                     toastTimerDown.Stop();

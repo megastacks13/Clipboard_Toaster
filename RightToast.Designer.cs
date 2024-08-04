@@ -67,7 +67,6 @@
             // 
             // toastTimerDown
             // 
-            this.toastTimerDown.Enabled = true;
             this.toastTimerDown.Interval = 1;
             this.toastTimerDown.Tick += new System.EventHandler(this.toastTimerDown_Tick);
             // 
