@@ -7,7 +7,7 @@ namespace Clipboard_Toast
     public partial class RightToast : Form
     {
         #pragma warning disable IDE0044
-        private static int horizontalSpeed = MainWindow.screenWidth/960;
+        private static int horizontalSpeed = MainWindow.screenWidth/300;
         private int timer = 200;
         private int _toastX, _toastY;
         private double _toastTargetX;
@@ -34,7 +34,7 @@ namespace Clipboard_Toast
             
             this.Opacity = ComputeOpacity(Math.Max(1, _toastX - _toastTargetX));
 
-            if (_toastX <= MainWindow.screenWidth - this.Width * 11/10)
+            if (_toastX <= _toastTargetX)
             {
                 toastTimer.Stop();
                 toastTimerDown.Start();
@@ -59,7 +59,7 @@ namespace Clipboard_Toast
 
         private void Position()
         { 
-            _toastX = MainWindow.screenWidth - this.Width;
+            _toastX = MainWindow.screenWidth - this.Width/2;
             if (!isUp)
                 _toastY = MainWindow.screenHeight - this.Height - (MainWindow.screenHeight / 260);
             else
@@ -70,7 +70,7 @@ namespace Clipboard_Toast
 
         private void ComputeTargetPosition()
         {
-            _toastTargetX = MainWindow.screenWidth - this.Width * 11.0 / 10.0;   
+            _toastTargetX = MainWindow.screenWidth - this.Width;   
         }
 
         double ComputeOpacity(double distance) => 1.0/distance;

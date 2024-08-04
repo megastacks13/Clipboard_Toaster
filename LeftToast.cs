@@ -15,6 +15,7 @@ namespace Clipboard_Toast
         public LeftToast(bool up)
         {
             InitializeComponent();
+            ComputeTargetPosition();
             this._isUp = up;
         }
 
@@ -68,7 +69,7 @@ namespace Clipboard_Toast
 
         private void ComputeTargetPosition()
         {
-            toastTargetX = this.Width * 6.0/5.0;
+            toastTargetX = 0;
         }
         double ComputeOpacity(double distance) => 1.0 / distance;
 
