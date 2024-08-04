@@ -1,15 +1,6 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Drawing.Text;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Clipboard_Toast
@@ -61,6 +52,8 @@ namespace Clipboard_Toast
         private string clipboardOld = "";
         private string clipboardValue = "";
 
+        private bool first = true;
+
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);    // Process the message 
@@ -82,7 +75,11 @@ namespace Clipboard_Toast
                     clipboardValue = "Image"; 
 
                 }
-                ShowToast();
+
+                // Control Structure for fixing the issue with toast showing on app running
+                if (!first)
+                    ShowToast();
+                else first = false;
             }
         }
 
@@ -97,7 +94,7 @@ namespace Clipboard_Toast
         {
             InitializeToast();
 
-            title = clipboardValue.Equals(clipboardOld) == true ? "Repeated Data" : "Copied!";
+            title = clipboardValue.Equals(clipboardOld) ? "Repeated Data" : title;
             message = clipboardValue;
             clipboardOld = clipboardValue;
             _toast.Show();
