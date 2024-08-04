@@ -18,13 +18,21 @@ namespace Clipboard_Toast
         private IntPtr _clipboardViewerNext;                // Our variable that will hold the value to identify the next window in the clipboard viewer chain
 
         // Toast-related variables
+        /// <summary>
+        /// Title of the toast notification
+        /// </summary>
         public static string title = "";
+
+        /// <summary>
+        /// Message of the toast notification
+        /// </summary>
         public static string message = "";
 
         /// <summary>
         /// Width of the Main Screen -> Same as horizontal resolution
         /// </summary>
         public static int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+
         /// <summary>
         /// Height of the Main Screen -> Same as vertical resolution
         /// </summary>
