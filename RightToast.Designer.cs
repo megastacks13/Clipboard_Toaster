@@ -62,13 +62,13 @@
             // toastTimer
             // 
             this.toastTimer.Enabled = true;
-            this.toastTimer.Interval = 10;
+            this.toastTimer.Interval = 1;
             this.toastTimer.Tick += new System.EventHandler(this.toastTimer_Tick_1);
             // 
             // toastTimerDown
             // 
             this.toastTimerDown.Enabled = true;
-            this.toastTimerDown.Interval = 10;
+            this.toastTimerDown.Interval = 1;
             this.toastTimerDown.Tick += new System.EventHandler(this.toastTimerDown_Tick);
             // 
             // pb_Icon
@@ -102,6 +102,7 @@
             this.Controls.Add(this.pb_Icon);
             this.Controls.Add(this.pb_Triangle);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximumSize = new System.Drawing.Size(282, 59);
             this.Name = "RightToast";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

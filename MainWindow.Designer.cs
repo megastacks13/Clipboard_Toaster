@@ -125,7 +125,7 @@
             // 
             // Pb_ScreenImage
             // 
-            this.Pb_ScreenImage.Image = global::Clipboard_Toast.Properties.Resources.Scr_Up_Center;
+            this.Pb_ScreenImage.Image = global::Clipboard_Toast.Properties.Resources.Scr_Down_Right;
             this.Pb_ScreenImage.Location = new System.Drawing.Point(41, 37);
             this.Pb_ScreenImage.Name = "Pb_ScreenImage";
             this.Pb_ScreenImage.Size = new System.Drawing.Size(425, 238);

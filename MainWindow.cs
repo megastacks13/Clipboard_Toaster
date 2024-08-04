@@ -54,7 +54,7 @@ namespace Clipboard_Toast
         private Form _toast;
 
         private string verticalPositioning = HE_DOWN;
-        private string horizontalPositioning = POS_LEFT;
+        private string horizontalPositioning = POS_RIGHT;
         private string scrImageName;
 
         private string clipboardOld = "";
