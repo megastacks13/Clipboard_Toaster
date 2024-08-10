@@ -6,14 +6,16 @@ namespace Clipboard_Toast
 {
     public partial class LeftToast : Form
     {
-        private const int HorizontalSpeed = 10;
+        private static readonly int HorizontalSpeed = MainWindow.ScreenWidth / 450;
         private int _toastX, _toastY;
+        private int _timer = 200;
+        private double _toastTargetX;
         private readonly bool _isUp;
-        private int _timer = 150;
 
         public LeftToast(bool up)
         {
             InitializeComponent();
+            ComputeTargetPosition();
             this._isUp = up;
         }
 
@@ -27,9 +29,10 @@ namespace Clipboard_Toast
         private void ToastTimer_Tick(object sender, EventArgs e)
         {
             _toastX += HorizontalSpeed;
+            this.Opacity = ComputeOpacity(Math.Max(1,  _toastTargetX - _toastX));
             this.Location = new Point(_toastX, _toastY);
-            this.BringToFront();
-            if (_toastX >= 0)
+
+            if (_toastX >= _toastTargetX)
             {
                 ToastTimer.Stop();
                 ToastTimerDown.Start();
@@ -39,10 +42,11 @@ namespace Clipboard_Toast
         private void ToastTimerDown_Tick(object sender, EventArgs e)
         {
             _timer--;
-            this.BringToFront();
+
             if (_timer <= 0)
             {
                 this.Location = new Point(_toastX -= HorizontalSpeed, _toastY);
+                this.Opacity = ComputeOpacity((_toastX - _toastTargetX) * 2);
                 if (_toastX < -this.Width)
                 {
                     ToastTimerDown.Stop();
@@ -54,7 +58,7 @@ namespace Clipboard_Toast
 
         private void Position()
         {
-            _toastX = -this.Width;
+            _toastX = -this.Width/2;
             if (!_isUp)
                 _toastY = MainWindow.ScreenHeight - this.Height - (MainWindow.ScreenHeight / 260);
             else
@@ -63,6 +67,11 @@ namespace Clipboard_Toast
             this.Location = new Point(_toastX, _toastY);
         }
 
+        private void ComputeTargetPosition()
+        {
+            _toastTargetX = 0;
+        }
+        double ComputeOpacity(double distance) => 1.0 / distance;
 
     }
 }

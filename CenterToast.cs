@@ -6,9 +6,10 @@ namespace Clipboard_Toast
 {
     public partial class CenterToast : Form
     {
+        #pragma warning disable IDE0044
         private readonly bool _isUp;
-        private int _toastX, _toastY;
         private int _timer = 100;
+        private int _toastX, _toastY;
 
 
         public CenterToast(bool up)

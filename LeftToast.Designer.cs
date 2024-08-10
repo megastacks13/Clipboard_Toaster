@@ -83,12 +83,12 @@
             // ToastTimer
             // 
             this.ToastTimer.Enabled = true;
-            this.ToastTimer.Interval = 10;
+            this.ToastTimer.Interval = 1;
             this.ToastTimer.Tick += new System.EventHandler(this.ToastTimer_Tick);
             // 
             // ToastTimerDown
             // 
-            this.ToastTimerDown.Interval = 10;
+            this.ToastTimerDown.Interval = 1;
             this.ToastTimerDown.Tick += new System.EventHandler(this.ToastTimerDown_Tick);
             // 
             // LeftToast

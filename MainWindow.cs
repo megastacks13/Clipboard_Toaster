@@ -13,7 +13,7 @@ namespace Clipboard_Toast
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
         public static extern bool ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
-        
+
         private const int WmDrawClipboard = 0x0308;        // WmDrawClipboard message
         // ReSharper disable once NotAccessedField.Local
         private IntPtr _clipboardViewerNext;                // Our variable that will hold the value to identify the next window in the clipboard viewer chain
@@ -55,7 +55,7 @@ namespace Clipboard_Toast
         private Form _toast;
 
         private string _verticalPositioning = HeDown;
-        private string _horizontalPositioning = PosLeft;
+        private string _horizontalPositioning = PosRight;
         private string _scrImageName;
 
         private string _clipboardOld = "";
@@ -178,7 +178,7 @@ namespace Clipboard_Toast
             }
 
             _verticalPositioning = Rb_Up.Checked ? HeUp : HeDown;
-            
+
         }
     }
 }
