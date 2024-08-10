@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -14,7 +15,8 @@ namespace Clipboard_Toast
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
         public static extern bool ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
 
-        private const int WmDrawClipboard = 0x0308;        // WmDrawClipboard message
+        // ReSharper disable once InconsistentNaming
+        private const int WM_DRAWCLIPBOARD = 0x0308;        // WM_DRAWCLIPBOARD message
         // ReSharper disable once NotAccessedField.Local
         private IntPtr _clipboardViewerNext;                // Our variable that will hold the value to identify the next window in the clipboard viewer chain
 
@@ -62,34 +64,17 @@ namespace Clipboard_Toast
         private string _clipboardValue = "";
 
         private bool _first = true;
-
+        
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);    // Process the message 
+            if (m.Msg != WM_DRAWCLIPBOARD) return; // We make sure we received the correct message
 
-            if (m.Msg == WmDrawClipboard)
-            {
-                IDataObject iData = Clipboard.GetDataObject();      // Clipboard's data
-
-                if (iData != null && iData.GetDataPresent(DataFormats.Text))
-                {
-                    Title = "Text Copied!";      // Clipboard text
-                    _clipboardValue = Clipboard.GetText();
-
-                }
-                else if (iData != null && iData.GetDataPresent(DataFormats.Bitmap))
-                {
-                    Title = "Image Copied";  // Clipboard image
-                    // TO-DO: Change to show unique text per image but consistent for each image
-                    _clipboardValue = "Image"; 
-
-                }
-
-                // Control Structure for fixing the issue with toast showing on app running
-                if (!_first)
-                    ShowToast();
-                else _first = false;
-            }
+            IDataObject iData = Clipboard.GetDataObject();      // Clipboard's data
+            
+            SetClipboardValue(iData);
+            if (_clipboardOld.Equals(_clipboardValue)) return;
+            ShowToast();
         }
 
         public MainWindow()
@@ -101,6 +86,13 @@ namespace Clipboard_Toast
 
         private void ShowToast()
         {
+            // Control Structure for fixing the issue with toast showing on app running
+            if (_first)
+            {
+                _first = false;
+                return;
+            }
+            
             InitializeToast();
 
             Title = _clipboardValue.Equals(_clipboardOld) ? "Repeated Data" : Title;
@@ -179,6 +171,33 @@ namespace Clipboard_Toast
 
             _verticalPositioning = Rb_Up.Checked ? HeUp : HeDown;
 
+        }
+
+        private void SetClipboardValue(IDataObject iData)
+        {
+            if (iData.GetDataPresent(typeof(string)))
+            {
+                Title = "Text Copied!";
+                _clipboardValue = Clipboard.GetText();
+            }
+                
+            else if (iData.GetDataPresent(typeof(Bitmap)))
+            {
+                Title = "Image Copied";
+                _clipboardValue = "image";
+            }
+            
+            else if (iData.GetDataPresent(typeof(File)))
+            {
+                Title = "File Copied";
+                _clipboardValue = Clipboard.GetDataObject()?.ToString();
+            }
+
+            else
+            {
+                Title = "Data Copied";
+                _clipboardValue = Clipboard.GetDataObject()?.ToString();
+            }
         }
     }
 }
