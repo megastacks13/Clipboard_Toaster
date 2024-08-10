@@ -9,85 +9,86 @@ namespace Clipboard_Toast
     {
         // Clipboard Stalker Variables
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
+        private static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
         public static extern bool ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
 
-        private const int WM_DRAWCLIPBOARD = 0x0308;        // WM_DRAWCLIPBOARD message
+        private const int WmDrawClipboard = 0x0308;        // WmDrawClipboard message
+        // ReSharper disable once NotAccessedField.Local
         private IntPtr _clipboardViewerNext;                // Our variable that will hold the value to identify the next window in the clipboard viewer chain
 
         // Toast-related variables
         /// <summary>
         /// Title of the toast notification
         /// </summary>
-        public static string title = "";
+        public static string Title = "";
 
         /// <summary>
         /// Message of the toast notification
         /// </summary>
-        public static string message = "";
+        public static string Message = "";
 
         /// <summary>
         /// Width of the Main Screen -> Same as horizontal resolution
         /// </summary>
-        public static int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+        public static readonly int ScreenWidth = Screen.PrimaryScreen.WorkingArea.Width;
 
         /// <summary>
         /// Height of the Main Screen -> Same as vertical resolution
         /// </summary>
-        public static int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
+        public static readonly int ScreenHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
         // Strings are used rather than an enum because they contain string data needed for data finding
         // Width constants
-        private const string POS_LEFT = "Left";
-        private const string POS_CENTER = "Center";
-        private const string POS_RIGHT = "Right";
+        private const string PosLeft = "Left";
+        private const string PosCenter = "Center";
+        private const string PosRight = "Right";
 
         // Height constants
-        private const string HE_UP = "Up";
-        private const string HE_DOWN = "Down";
+        private const string HeUp = "Up";
+        private const string HeDown = "Down";
 
         /// <summary>
         /// Variable for storing the toast that will be displayed
         /// </summary>
         private Form _toast;
 
-        private string verticalPositioning = HE_DOWN;
-        private string horizontalPositioning = POS_RIGHT;
-        private string scrImageName;
+        private string _verticalPositioning = HeDown;
+        private string _horizontalPositioning = PosRight;
+        private string _scrImageName;
 
-        private string clipboardOld = "";
-        private string clipboardValue = "";
+        private string _clipboardOld = "";
+        private string _clipboardValue = "";
 
-        private bool first = true;
+        private bool _first = true;
 
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);    // Process the message 
 
-            if (m.Msg == WM_DRAWCLIPBOARD)
+            if (m.Msg == WmDrawClipboard)
             {
                 IDataObject iData = Clipboard.GetDataObject();      // Clipboard's data
 
-                if (iData.GetDataPresent(DataFormats.Text))
+                if (iData != null && iData.GetDataPresent(DataFormats.Text))
                 {
-                    title = "Text Copied!";      // Clipboard text
-                    clipboardValue = Clipboard.GetText();
+                    Title = "Text Copied!";      // Clipboard text
+                    _clipboardValue = Clipboard.GetText();
 
                 }
-                else if (iData.GetDataPresent(DataFormats.Bitmap))
+                else if (iData != null && iData.GetDataPresent(DataFormats.Bitmap))
                 {
-                    title = "Image Copied";  // Clipboard image
+                    Title = "Image Copied";  // Clipboard image
                     // TO-DO: Change to show unique text per image but consistent for each image
-                    clipboardValue = "Image"; 
+                    _clipboardValue = "Image"; 
 
                 }
 
                 // Control Structure for fixing the issue with toast showing on app running
-                if (!first)
+                if (!_first)
                     ShowToast();
-                else first = false;
+                else _first = false;
             }
         }
 
@@ -102,25 +103,25 @@ namespace Clipboard_Toast
         {
             InitializeToast();
 
-            title = clipboardValue.Equals(clipboardOld) ? "Repeated Data" : title;
-            message = clipboardValue;
-            clipboardOld = clipboardValue;
+            Title = _clipboardValue.Equals(_clipboardOld) ? "Repeated Data" : Title;
+            Message = _clipboardValue;
+            _clipboardOld = _clipboardValue;
             _toast.Show();
 
         }
 
         private void InitializeToast()
         {
-            switch (horizontalPositioning)
+            switch (_horizontalPositioning)
             {
-                case POS_RIGHT:
-                    _toast = new RightToast(verticalPositioning == HE_UP);
+                case PosRight:
+                    _toast = new RightToast(_verticalPositioning == HeUp);
                     break;
-                case POS_CENTER:
-                    _toast = new CenterToast(verticalPositioning == HE_UP);
+                case PosCenter:
+                    _toast = new CenterToast(_verticalPositioning == HeUp);
                     break;
-                case POS_LEFT:
-                    _toast = new LeftToast(verticalPositioning == HE_UP);
+                case PosLeft:
+                    _toast = new LeftToast(_verticalPositioning == HeUp);
                     break;
 
             }
@@ -157,33 +158,27 @@ namespace Clipboard_Toast
         private void ChangeScreenImage()
         {
             UpdateStates();
-            scrImageName = $"Scr_{verticalPositioning}_{horizontalPositioning}";
-            Pb_ScreenImage.Image = (Image)Properties.Resources.ResourceManager.GetObject(scrImageName);
+            _scrImageName = $"Scr_{_verticalPositioning}_{_horizontalPositioning}";
+            Pb_ScreenImage.Image = (Image)Properties.Resources.ResourceManager.GetObject(_scrImageName);
         }
 
         private void UpdateStates()
         {
             if (Rb_Left.Checked)
             {
-                horizontalPositioning = POS_LEFT;
+                _horizontalPositioning = PosLeft;
             }
             else if (Rb_Center.Checked)
             {
-                horizontalPositioning = POS_CENTER;
+                _horizontalPositioning = PosCenter;
             }
             else // when the right button is checked...
             {
-                horizontalPositioning = POS_RIGHT;
+                _horizontalPositioning = PosRight;
             }
 
-            if (Rb_Up.Checked)
-            {
-                verticalPositioning = HE_UP;
-            }
-            else // when the Down Button is checked...
-            {
-                verticalPositioning = HE_DOWN;
-            }
+            _verticalPositioning = Rb_Up.Checked ? HeUp : HeDown;
+
         }
     }
 }

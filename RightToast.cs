@@ -6,17 +6,16 @@ namespace Clipboard_Toast
 {
     public partial class RightToast : Form
     {
-        #pragma warning disable IDE0044
-        private static int horizontalSpeed = MainWindow.screenWidth/300;
-        private int timer = 200;
+        private static readonly int HorizontalSpeed = MainWindow.ScreenWidth/300;
+        private int _timer = 200;
         private int _toastX, _toastY;
         private double _toastTargetX;
-        private bool isUp;
+        private readonly bool _isUp;
 
         public RightToast(bool up)
         {
             InitializeComponent();
-            this.isUp = up;
+            this._isUp = up;
             this.Opacity = 0.0;
         }
 
@@ -24,13 +23,13 @@ namespace Clipboard_Toast
         {
             Position();
             ComputeTargetPosition();
-            lb_Title.Text = MainWindow.title;
-            lb_message.Text = MainWindow.message;
+            lb_Title.Text = MainWindow.Title;
+            lb_message.Text = MainWindow.Message;
         }
 
         private void toastTimer_Tick_1(object sender, EventArgs e)
         {
-            this.Location = new Point(_toastX -= horizontalSpeed, _toastY);
+            this.Location = new Point(_toastX -= HorizontalSpeed, _toastY);
             
             this.Opacity = ComputeOpacity(Math.Max(1, _toastX - _toastTargetX));
 
@@ -43,15 +42,15 @@ namespace Clipboard_Toast
 
         private void toastTimerDown_Tick(object sender, EventArgs e)
         {
-            timer--;
-            if (timer <= 0)
+            _timer--;
+            if (_timer <= 0)
             {
-                this.Location = new Point(_toastX += horizontalSpeed, _toastY);
+                this.Location = new Point(_toastX += HorizontalSpeed, _toastY);
                 this.Opacity = ComputeOpacity((_toastX - _toastTargetX)*2);
-                if (_toastX > MainWindow.screenWidth)
+                if (_toastX > MainWindow.ScreenWidth)
                 {
                     toastTimerDown.Stop();
-                    timer = 100;
+                    _timer = 100;
                     this.Close();
                 }
             }
@@ -59,18 +58,18 @@ namespace Clipboard_Toast
 
         private void Position()
         { 
-            _toastX = MainWindow.screenWidth - this.Width/2;
-            if (!isUp)
-                _toastY = MainWindow.screenHeight - this.Height - (MainWindow.screenHeight / 260);
+            _toastX = MainWindow.ScreenWidth - this.Width/2;
+            if (!_isUp)
+                _toastY = MainWindow.ScreenHeight - this.Height - (MainWindow.ScreenHeight / 260);
             else
-                _toastY = this.Height - (MainWindow.screenHeight / 260);
+                _toastY = this.Height - (MainWindow.ScreenHeight / 260);
 
             this.Location = new Point(_toastX, _toastY);
         }
 
         private void ComputeTargetPosition()
         {
-            _toastTargetX = MainWindow.screenWidth - this.Width;   
+            _toastTargetX = MainWindow.ScreenWidth - this.Width;   
         }
 
         double ComputeOpacity(double distance) => 1.0/distance;
