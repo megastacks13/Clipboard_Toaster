@@ -184,7 +184,7 @@ namespace Clipboard_Toast
             else if (iData.GetDataPresent(typeof(Bitmap)))
             {
                 Title = "Image Copied";
-                _clipboardValue = "image";
+                _clipboardValue = iData.GetData(typeof(Bitmap)).GetHashCode().ToString();
             }
             
             else if (iData.GetDataPresent(typeof(File)))
