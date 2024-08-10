@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Clipboard_Toast
 {
     public partial class LeftToast : Form
     {
-        private int _horizontalSpeed = 10;
-        private int toastX, toastY;
-        private bool _isUp = false;
+        private const int HorizontalSpeed = 10;
+        private int _toastX, _toastY;
+        private readonly bool _isUp;
+        private int _timer = 150;
 
         public LeftToast(bool up)
         {
@@ -25,35 +20,33 @@ namespace Clipboard_Toast
         private void ToastMessage_Load(object sender, EventArgs e)
         {
             Position();
-            lb_Title.Text = MainWindow.title;
-            lb_message.Text = MainWindow.message;
+            lb_Title.Text = MainWindow.Title;
+            lb_message.Text = MainWindow.Message;
         }
 
         private void ToastTimer_Tick(object sender, EventArgs e)
         {
-            toastX += _horizontalSpeed;
-            this.Location = new Point(toastX, toastY);
+            _toastX += HorizontalSpeed;
+            this.Location = new Point(_toastX, _toastY);
             this.BringToFront();
-            if (toastX >= 0)
+            if (_toastX >= 0)
             {
                 ToastTimer.Stop();
                 ToastTimerDown.Start();
             }
         }
 
-        int timer = 150;
-
         private void ToastTimerDown_Tick(object sender, EventArgs e)
         {
-            timer--;
+            _timer--;
             this.BringToFront();
-            if (timer <= 0)
+            if (_timer <= 0)
             {
-                this.Location = new Point(toastX -= _horizontalSpeed, toastY);
-                if (toastX < -this.Width)
+                this.Location = new Point(_toastX -= HorizontalSpeed, _toastY);
+                if (_toastX < -this.Width)
                 {
                     ToastTimerDown.Stop();
-                    timer = 100;
+                    _timer = 100;
                     this.Close();
                 }
             }
@@ -61,13 +54,13 @@ namespace Clipboard_Toast
 
         private void Position()
         {
-            toastX = -this.Width;
+            _toastX = -this.Width;
             if (!_isUp)
-                toastY = MainWindow.screenHeight - this.Height - (MainWindow.screenHeight / 260);
+                _toastY = MainWindow.ScreenHeight - this.Height - (MainWindow.ScreenHeight / 260);
             else
-                toastY = this.Height - (MainWindow.screenHeight / 260);
+                _toastY = this.Height - (MainWindow.ScreenHeight / 260);
 
-            this.Location = new Point(toastX, toastY);
+            this.Location = new Point(_toastX, _toastY);
         }
 
 

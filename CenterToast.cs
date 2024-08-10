@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Clipboard_Toast
 {
     public partial class CenterToast : Form
     {
-        #pragma warning disable IDE0044
-        private bool _isUp = false;
-        private int toastX, toastY;
+        private readonly bool _isUp;
+        private int _toastX, _toastY;
+        private int _timer = 100;
+
 
         public CenterToast(bool up)
         {
@@ -36,20 +31,18 @@ namespace Clipboard_Toast
             }
         }
 
-        int timer = 100;
-
         private void ToastTimerDown_Tick(object sender, EventArgs e)
         {
-            timer--;
+            _timer--;
             this.BringToFront();
-            if (timer <= 0)
+            if (_timer <= 0)
             {
                 Console.WriteLine(this.Opacity);
                 this.Opacity -= 0.05;
                 if (this.Opacity <= 0.0)
                 {
                     ToastTimerDown.Stop();
-                    timer = 100;
+                    _timer = 100;
                     this.Close();
                 }
             }
@@ -58,14 +51,14 @@ namespace Clipboard_Toast
 
         private void Position()
         {
-            toastX = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width/2;
+            _toastX = Screen.PrimaryScreen.WorkingArea.Width / 2 - this.Width/2;
 
             if (!_isUp)
-                toastY = Screen.PrimaryScreen.WorkingArea.Height - this.Height - (MainWindow.screenHeight / 11);
+                _toastY = Screen.PrimaryScreen.WorkingArea.Height - this.Height - (MainWindow.ScreenHeight / 11);
             else
-                toastY = this.Height - (MainWindow.screenHeight / 300);
+                _toastY = this.Height - (MainWindow.ScreenHeight / 300);
 
-            this.Location = new Point(toastX, toastY);
+            this.Location = new Point(_toastX, _toastY);
         }
     }
 }
